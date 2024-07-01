@@ -176,14 +176,14 @@ fn main() {
     let mut detail = String::new();
     let mut proc_arch = arch::validate(&nvm_env.arch);
 
-    // #[cfg(target_os = "windows")]
-    // if !Environment::is_terminal() {
-    //     Environment::alert(
-    //         "NVM for Windows should be run from a terminal such as CMD or PowerShell.",
-    //         vec!["Terminal Only"],
-    //     );
-    //     exit(0);
-    // }
+    #[cfg(target_os = "windows")]
+    if !Environment::is_terminal() {
+        Environment::alert(
+            "NVM for Windows should be run from a terminal such as CMD or PowerShell.",
+            vec!["Terminal Only"],
+        );
+        exit(0);
+    }
 
     if args.len() > 2 {
         detail = args[2].clone();

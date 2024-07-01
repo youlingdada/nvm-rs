@@ -42,7 +42,7 @@ Root: HKCU; Subkey: "Environment"; ValueType: expandsz; ValueName: "NVM_SYMLINK"
 
 [Code]
 var
-  NvmSymlinkPage: TInputFileWizardPage;
+  NvmSymlinkPage: TInputDirWizardPage;
   PathStr: String;
 
 // 判断程序是否已经安装过
@@ -76,11 +76,12 @@ begin
   end;
 
   LOG('Select NVM_SYMLINK PATH');
-  // 创建文件选择页面，用户选择 NVM_SYMLINK 的位置
-  NvmSymlinkPage := CreateInputFilePage(wpSelectDir,
-    'Select NVM_SYMLNK Location', 'Where is NVM_SYMLNK located?',
-    'Select where NVM_SYMLNK is located, then click Next.');
-  NvmSymlinkPage.Add('NVM_SYMLNK:','All files','');
+  // 创建目录选择页面，用户选择 NVM_SYMLINK 的位置
+  NvmSymlinkPage := CreateInputDirPage(wpSelectDir,
+    'Select NVM_SYMLINK Location', 'Where is NVM_SYMLINK located?',
+    'Select the directory where NVM_SYMLINK is located, then click Next.',False, 'New Folder');
+  NvmSymlinkPage.Add('');
+  NvmSymlinkPage.Values[0] := ExpandConstant('{commonpf}\nvm-rs\Node');
 
   // 获取当前 PATH 环境变量值
   if not RegQueryStringValue(HKEY_CURRENT_USER, 'Environment', 'PATH', PathStr) then
