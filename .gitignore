@@ -1,5 +1,4 @@
-target
-.idea
-tmp
-.vscode
-Setup
+**/target
+**/tmp
+**/.vscode
+**/Setup
