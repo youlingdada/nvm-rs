@@ -219,6 +219,40 @@ dependencies = [
 ]
 
 [[package]]
+name = "cli"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "async-recursion",
+ "charset",
+ "chrono",
+ "console",
+ "dialoguer",
+ "encoding",
+ "env_logger",
+ "flate2",
+ "goblin",
+ "hex",
+ "http 1.1.0",
+ "indicatif",
+ "log",
+ "regex",
+ "reqwest",
+ "semver",
+ "serde",
+ "serde_json",
+ "sys-info",
+ "sysinfo",
+ "tar",
+ "term-table",
+ "tokio",
+ "url",
+ "winapi",
+ "windows 0.56.0",
+ "zip",
+]
+
+[[package]]
 name = "console"
 version = "0.15.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -948,40 +982,6 @@ name = "number_prefix"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "830b246a0e5f20af87141b25c173cd1b609bd7779a4617d6ec582abaf90870f3"
-
-[[package]]
-name = "nvm-cli"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "async-recursion",
- "charset",
- "chrono",
- "console",
- "dialoguer",
- "encoding",
- "env_logger",
- "flate2",
- "goblin",
- "hex",
- "http 1.1.0",
- "indicatif",
- "log",
- "regex",
- "reqwest",
- "semver",
- "serde",
- "serde_json",
- "sys-info",
- "sysinfo",
- "tar",
- "term-table",
- "tokio",
- "url",
- "winapi",
- "windows 0.56.0",
- "zip",
-]
 
 [[package]]
 name = "object"
