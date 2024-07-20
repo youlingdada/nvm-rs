@@ -1,17 +1,20 @@
 use std::fs::File;
-use std::io::{BufRead, Error, Read as _};
-use std::path::{Path, PathBuf};
-use std::{env, fs, io};
+use std::io::{BufRead, Error};
+use std::path::Path;
+use std::{fs, io};
 
 use anyhow::Result;
-use goblin::mach::{Mach, MachO};
-use goblin::Object;
+
 #[cfg(target_os="linux")]
 use std::os::unix::fs::PermissionsExt;
 #[cfg(target_os="linux")]
 use tar::{EntryType,Archive};
 #[cfg(target_os="linux")]
 use flate2::read::GzDecoder;
+#[cfg(target_os="linux")]
+use std::path::PathBuf;
+#[cfg(target_os="linux")]
+use std::env;
 
 #[cfg(target_os="macos")]
 use std::os::unix::fs::PermissionsExt;
@@ -19,6 +22,10 @@ use std::os::unix::fs::PermissionsExt;
 use tar::{EntryType,Archive};
 #[cfg(target_os="macos")]
 use flate2::read::GzDecoder;
+#[cfg(target_os="macos")]
+use std::path::PathBuf;
+#[cfg(target_os="macos")]
+use std::env;
 
 #[cfg(target_os="windows")]
 use zip::ZipArchive;

@@ -23,8 +23,6 @@ fn run(name: &str, dir: Option<&str>, args: &Vec<&str>) -> Result<bool, String> 
 
     cmd.args(args);
 
-    // print_command(&cmd);
-
     match cmd.output() {
         Ok(output) => {
             if !output.status.success() {
