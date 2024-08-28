@@ -5,7 +5,7 @@ async fn send_request(
     path: &str,
     target: Option<&str>,
 ) -> tokio::io::Result<String> {
-    let socket = UdpSocket::bind("0.0.0.0:0").await?;
+    let socket: UdpSocket = UdpSocket::bind("0.0.0.0:0").await?;
     let request = if let Some(t) = target {
         format!("{} {} {}", command, path, t)
     } else {

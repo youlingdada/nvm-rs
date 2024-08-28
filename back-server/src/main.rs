@@ -29,16 +29,38 @@ async fn handle_request(
                 "CREATE_DIR_EXISTS".to_string()
             }
         }
-        "CREATE_SYMLINK" => {
+        "CREATE_SYMLINK_DIR" => {
             if let Some(target) = parts.get(2) {
                 if !Path::new(&path).exists() {
+                    #[cfg(target_os = "windows")]
                     std::os::windows::fs::symlink_dir(target, &path)?;
-                    "CREATE_SYMLINK_YES".to_string()
+                    #[cfg(target_os = "linux")]
+                    std::os::unix::fs::symlink(target, &path)?;
+                    #[cfg(target_os = "macos")]
+                    std::os::unix::fs::symlink(target, &path)?;
+                    "CREATE_SYMLINK_DIR_YES".to_string()
                 } else {
-                    "CREATE_SYMLINK_EXISTS".to_string()
+                    "CREATE_SYMLINK_DIR_EXISTS".to_string()
                 }
             } else {
-                "CREATE_SYMLINK_NO".to_string()
+                "CREATE_SYMLINK_DIR_NO".to_string()
+            }
+        }
+        "CREATE_SYMLINK_FILE" => {
+            if let Some(target) = parts.get(2) {
+                if !Path::new(&path).exists() {
+                    #[cfg(target_os = "windows")]
+                    std::os::windows::fs::symlink_file(target, &path)?;
+                    #[cfg(target_os = "linux")]
+                    std::os::unix::fs::symlink(target, &path)?;
+                    #[cfg(target_os = "macos")]
+                    std::os::unix::fs::symlink(target, &path)?;
+                    "CREATE_SYMLINK_FILE_YES".to_string()
+                } else {
+                    "CREATE_SYMLINK_FILE_EXISTS".to_string()
+                }
+            } else {
+                "CREATE_SYMLINK_FILE_NO".to_string()
             }
         }
         "DELETE_FILE" => {

@@ -1,2 +1,2 @@
 [workspace]
-members = ["cli", "win"]
+members = ["cli", "lib", "back-server"]

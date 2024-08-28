@@ -16,6 +16,7 @@ use semver::Version;
 use term_table::row::Row;
 use term_table::table_cell::{Alignment, TableCell};
 use term_table::Table;
+use tokio::runtime::Runtime;
 #[cfg(target_os = "windows")]
 use windows::core::Result as WinResult;
 #[cfg(target_os = "windows")]
@@ -34,7 +35,7 @@ use winapi::um::processenv::GetStdHandle;
 #[cfg(target_os = "windows")]
 use winapi::um::winbase::STD_OUTPUT_HANDLE;
 
-use common::{arch, cmd, strings};
+use common::{arch, strings, win_client};
 
 use crate::common::file;
 use crate::common::filepath;
@@ -71,6 +72,7 @@ struct Environment {
     verify_ssl: bool,
     version: String,
     ctx: Context,
+    rt: Runtime,
 }
 
 impl Environment {
@@ -101,6 +103,7 @@ impl Environment {
             verify_ssl: true,
             ctx: Context::new(),
             version: "1.0".to_string(),
+            rt: Runtime::new().unwrap(),
         }
     }
 
@@ -218,7 +221,7 @@ fn main() {
         "install" => nvm_env.install(&detail, &proc_arch),
         "uninstall" => nvm_env.uninstall(&detail),
         "switch" => nvm_env.switch(&detail),
-        "sw" =>nvm_env.switch(&detail),
+        "sw" => nvm_env.switch(&detail),
         "use" => nvm_env.use_node(&detail, &proc_arch, &reload),
         "list" => nvm_env.list(&detail),
         "ls" => nvm_env.list(&detail),
@@ -294,7 +297,9 @@ fn help() {
     println!("  nvm on                       : Enable node.js version management.");
     println!("  nvm off                      : Disable node.js version management.");
     println!("  nvm proxy [url]              : Set a proxy to use for downloads. Leave [url] blank to see the current proxy.");
-    println!("                                               Set [url] to \"none\" to remove the proxy.");
+    println!(
+        "                                               Set [url] to \"none\" to remove the proxy."
+    );
     println!("  nvm node_mirror [url]        : Set the node mirror. Defaults to https://nodejs.org/dist/. Leave [url] blank to use default url.");
     println!("  nvm npm_mirror [url]         : Set the npm mirror. Defaults to https://github.com/npm/cli/archive/. Leave [url] blank to default url.");
     println!("  nvm uninstall <version>      : The version must be a specific version.");
@@ -1011,7 +1016,8 @@ impl Environment {
             let (cv, _) = node::get_current_version();
             if cv == v {
                 let arg = filepath::clean(&self.symlink);
-                let res = cmd::elevated_run(&self.root, "rmdir", vec![&arg]);
+                let res = win_client::delete_dir(&self.rt, &arg);
+                // let res: Result<bool, String> = cmd::elevated_run(&self.root, "rmdir", vec![&arg]);
                 if res.is_err() {
                     println!("elevated_run fail,err:{}", res.as_ref().err().unwrap());
                     return;
@@ -1240,8 +1246,11 @@ impl Environment {
             return;
         }
 
-        installed_versions
-            .sort_by(|a, b| Version::parse(&b[1..]).unwrap().cmp(&Version::parse(&a[1..]).unwrap()));
+        installed_versions.sort_by(|a, b| {
+            Version::parse(&b[1..])
+                .unwrap()
+                .cmp(&Version::parse(&a[1..]).unwrap())
+        });
 
         let mut i = 0;
         for version in &installed_versions {
@@ -1305,7 +1314,8 @@ impl Environment {
         let symlink = filepath::clean(&self.symlink);
         // Remove symlink if it already exists
         if file::exists(&self.symlink) {
-            let res = cmd::elevated_run(&self.root, "rmdir", vec![&symlink]);
+            let res = win_client::delete_dir(&self.rt, &symlink);
+            // let res = cmd::elevated_run(&self.root, "rmdir", vec![&symlink]);
             if res.is_err() {
                 if Self::access_denied(res.as_ref().err().unwrap()) {
                     return;
@@ -1316,22 +1326,25 @@ impl Environment {
         let mut ok = true;
         let v_version = format!("v{}", version);
         let target_symlink = filepath::join(&self.root, vec![&v_version]);
-        let res = cmd::elevated_run(&self.root, "mklink", vec!["/D", &symlink, &target_symlink]);
+        let res = win_client::create_symlink(&self.rt, &symlink, &target_symlink);
+        // let res = cmd::elevated_run(&self.root, "mklink", vec!["/D", &symlink, &target_symlink]);
 
         if res.is_err() {
             let err = res.as_ref().err().unwrap();
             if err.contains("not have sufficient privilege")
                 || err.to_lowercase().contains("access is denied")
             {
-                let res =
-                    cmd::elevated_run(&self.root, "mklink", vec!["/D", &symlink, &target_symlink]);
+                // let res =
+                //     cmd::elevated_run(&self.root, "mklink", vec!["/D", &symlink, &target_symlink]);
+                let res = win_client::create_symlink(&self.rt, &symlink, &target_symlink);
 
                 if res.is_err() {
                     ok = false;
                     println!("{}", err)
                 }
             } else if err.contains("file already exists") {
-                let res = cmd::elevated_run(&self.root, "rmdir", vec![&symlink]);
+                let res = win_client::delete_dir(&self.rt, &symlink);
+                // let res = cmd::elevated_run(&self.root, "rmdir", vec![&symlink]);
                 let mut reloadable = true;
                 if reload.len() > 0 {
                     reloadable = reload[0];
@@ -1717,7 +1730,8 @@ impl Environment {
     #[cfg(target_os = "windows")]
     fn disable(&self) {
         let symlink = filepath::clean(&self.symlink);
-        match cmd::elevated_run(&self.root, "rmdir", vec![&symlink]) {
+        // cmd::elevated_run(&self.root, "rmdir", vec![&symlink])
+        match win_client::delete_dir(&self.rt, &symlink) {
             Ok(ok) => {
                 if ok {
                     println!("nvm disabled successful");

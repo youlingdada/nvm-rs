@@ -19,18 +19,18 @@ Source: "..\..\target\release\nvm-rs.exe"; DestDir: "{app}"; DestName: "nvm.exe"
 Source: "..\..\bin\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\..\assets\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
-[Icons]
-; 开始菜单快捷方式
-Name: "{group}\nvm-rs"; Filename: "{app}\nvm-rs.exe"; IconFilename: "{app}\nvm-rs.ico"; Tasks: startmenuicon
-; 桌面快捷方式
-Name: "{commondesktop}\nvm-rs"; Filename: "{app}\nvm-rs.exe"; IconFilename: "{app}\nvm-rs.ico"; Tasks: desktopicon
-; 快速启动栏快捷方式
-Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\nvm-rs"; Filename: "{app}\nvm-rs.exe"; IconFilename: "{app}\nvm-rs.ico"; Tasks: quicklaunchicon
+; [Icons]
+; ; 开始菜单快捷方式
+; Name: "{group}\nvm-rs"; Filename: "{app}\nvm-rs.exe"; IconFilename: "{app}\nvm-rs.ico"; Tasks: startmenuicon
+; ; 桌面快捷方式
+; Name: "{commondesktop}\nvm-rs"; Filename: "{app}\nvm-rs.exe"; IconFilename: "{app}\nvm-rs.ico"; Tasks: desktopicon
+; ; 快速启动栏快捷方式
+; Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\nvm-rs"; Filename: "{app}\nvm-rs.exe"; IconFilename: "{app}\nvm-rs.ico"; Tasks: quicklaunchicon
 
-[Tasks]
-Name: "startmenuicon"; Description: "Create a Start Menu icon"; GroupDescription: "Additional icons"; Flags: unchecked
-Name: "desktopicon"; Description: "Create a Desktop icon"; GroupDescription: "Additional icons"; Flags: unchecked
-Name: "quicklaunchicon"; Description: "Create a Quick Launch icon"; GroupDescription: "Additional icons"; Flags: unchecked
+; [Tasks]
+; Name: "startmenuicon"; Description: "Create a Start Menu icon"; GroupDescription: "Additional icons"; Flags: unchecked
+; Name: "desktopicon"; Description: "Create a Desktop icon"; GroupDescription: "Additional icons"; Flags: unchecked
+; Name: "quicklaunchicon"; Description: "Create a Quick Launch icon"; GroupDescription: "Additional icons"; Flags: unchecked
 
 [Run]
 Filename: "{app}\nvm-rs.exe"; Description: "Launch nvm-rs"; Flags: nowait postinstall skipifsilent
