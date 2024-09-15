@@ -19,26 +19,13 @@ Source: "..\..\target\release\nvm-rs.exe"; DestDir: "{app}"; DestName: "nvm.exe"
 Source: "..\..\bin\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\..\assets\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
-[Icons]
-; 开始菜单快捷方式
-Name: "{group}\nvm-rs"; Filename: "{app}\nvm-rs.exe"; IconFilename: "{app}\nvm-rs.ico"; Tasks: startmenuicon
-; 桌面快捷方式
-Name: "{commondesktop}\nvm-rs"; Filename: "{app}\nvm-rs.exe"; IconFilename: "{app}\nvm-rs.ico"; Tasks: desktopicon
-; 快速启动栏快捷方式
-Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\nvm-rs"; Filename: "{app}\nvm-rs.exe"; IconFilename: "{app}\nvm-rs.ico"; Tasks: quicklaunchicon
-
-[Tasks]
-Name: "startmenuicon"; Description: "Create a Start Menu icon"; GroupDescription: "Additional icons"; Flags: unchecked
-Name: "desktopicon"; Description: "Create a Desktop icon"; GroupDescription: "Additional icons"; Flags: unchecked
-Name: "quicklaunchicon"; Description: "Create a Quick Launch icon"; GroupDescription: "Additional icons"; Flags: unchecked
-
 [Run]
 Filename: "{app}\nvm-rs.exe"; Description: "Launch nvm-rs"; Flags: nowait postinstall skipifsilent
 
 [Registry]
 ; 设置环境变量
 Root: HKCU; Subkey: "Environment"; ValueType: expandsz; ValueName: "NVM_HOME"; ValueData: "{app}"; Flags: preservestringtype
-Root: HKCU; Subkey: "Environment"; ValueType: expandsz; ValueName: "NVM_SYMLINK"; ValueData: "{code:GetNvmSymlink}"; Flags: preservestringtype
+Root: HKCU; Subkey: "Environment"; ValueType: expandsz; ValueName: "NVM_SYMLINK"; ValueData: "{app}\Node"; Flags: preservestringtype
 
 [Code]
 var
@@ -74,14 +61,6 @@ begin
       WizardForm.Close;
     end;
   end;
-
-  LOG('Select NVM_SYMLINK PATH');
-  // 创建目录选择页面，用户选择 NVM_SYMLINK 的位置
-  NvmSymlinkPage := CreateInputDirPage(wpSelectDir,
-    'Select NVM_SYMLINK Location', 'Where is NVM_SYMLINK located?',
-    'Select the directory where NVM_SYMLINK is located, then click Next.',False, 'New Folder');
-  NvmSymlinkPage.Add('');
-  NvmSymlinkPage.Values[0] := ExpandConstant('{commonpf}\nvm-rs\Node');
 
   // 获取当前 PATH 环境变量值
   if not RegQueryStringValue(HKEY_CURRENT_USER, 'Environment', 'PATH', PathStr) then
@@ -124,7 +103,7 @@ begin
   begin
     FilePath := ExpandConstant('{app}\settings.txt');
     Text := 'root: ' + ExpandConstant('{app}') + #13#10 +
-            'symlink: ' + GetNvmSymlink('');
+            'symlink: ' + ExpandConstant('{app}\Node');
     SaveStringToFile(FilePath, Text, False);
   end;
 end;
