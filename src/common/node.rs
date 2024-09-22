@@ -8,6 +8,7 @@ use std::collections::HashMap;
 use std::fs;
 use std::process::Command;
 
+#[derive(Debug)]
 struct NodeInfo {
     version: Version,
     date: NaiveDate,
@@ -19,7 +20,7 @@ struct NodeInfo {
     open_ssl: String,
     modules: u32,
     lts: bool,
-    security: bool,
+    security: bool
 }
 
 impl NodeInfo {

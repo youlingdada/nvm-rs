@@ -52,7 +52,7 @@ impl WebContext {
             }
             self.node_base_address = node_base_address;
         }
-        let mut npm_base_address = String::new();
+        let mut npm_base_address: String = String::new();
         if npm_mirror != "" && npm_mirror != "none" {
             npm_base_address = npm_mirror.to_string();
 
