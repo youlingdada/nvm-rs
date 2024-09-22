@@ -1,4 +1,5 @@
-use crate::common::{arch, file, node};
+use crate::common::{arch, file};
+use crate::Environment;
 use reqwest::{Client, ClientBuilder, Proxy, StatusCode};
 use std::error::Error;
 use std::fs;
@@ -17,6 +18,9 @@ pub struct WebContext {
     client: Client,
 }
 
+const NODE_BASE_ADDRESS: &str = "https://nodejs.org/dist/";
+const NPM_BASE_ADDRESS: &str = "https://github.com/npm/cli/archive/";
+
 impl WebContext {
     pub fn new() -> WebContext {
         let rt = Runtime::new();
@@ -28,8 +32,8 @@ impl WebContext {
         }
 
         WebContext {
-            node_base_address: "https://nodejs.org/dist/".to_string(),
-            npm_base_address: "https://github.com/npm/cli/archive/".to_string(),
+            node_base_address: NODE_BASE_ADDRESS.to_owned(),
+            npm_base_address: NPM_BASE_ADDRESS.to_owned(),
             rt: rt.unwrap(),
             client: Client::new(),
         }
@@ -409,6 +413,12 @@ impl WebContext {
             return false;
         }
         true
+    }
+}
+
+impl Default for WebContext {
+    fn default() -> Self {
+        Self::new()
     }
 }
 
