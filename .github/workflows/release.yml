@@ -5,6 +5,14 @@ on:
     tags:
       - 'v*'  # 只在以 v 开头的标签时触发
 
+permissions:
+  contents: write      # 允许写入仓库内容（必要）
+  issues: read         # 只读访问问题（可选）
+  pull-requests: write  # 允许创建和修改拉取请求（可选）
+  actions: read        # 允许读取工作流（可选）
+  packages: write      # 允许发布和管理包（可选）
+
+
 jobs:
   build:
     runs-on: ${{ matrix.os }}
