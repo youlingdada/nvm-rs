@@ -3,44 +3,68 @@ name: Release
 on:
   push:
     tags:
-      - 'v*'
+      - 'v*'  # 只在以 v 开头的标签时触发
+
+permissions:
+  contents: write  # 确保有权限创建发布
 
 jobs:
-  release:
+  create_release:
     runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}  # 使用当前标签作为版本
+          release_name: "Release ${{ github.ref }}"
+          draft: false
+          prerelease: false
+
+  build_and_upload:
+    runs-on: ${{ matrix.os }}
+    needs: create_release  # 确保在创建发布之后再运行
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Check existing release
-        id: check_release
-        run: |
-          release=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-          "https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ github.ref }}")
-          echo "::set-output name=release_exists::$(echo $release | jq '. | length')"
-
-      - name: Create Release
-        id: create_release
-        if: steps.check_release.outputs.release_exists == '0'  # 只有在不存在时创建
-        uses: actions/create-release@latest
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
         with:
-          tag_name: ${{ github.ref }}
-          release_name: "Release ${{ github.ref }}"
-          draft: false
-          prerelease: false
+          toolchain: stable  # 或者您想使用的特定版本
 
       - name: Build
         run: cargo build --release
+
+      - name: Set asset path and name
+        id: set_asset
+        run: |
+          if [ "${{ matrix.os }}" == "windows-latest" ]; then
+            echo "asset_path=target/release/nvm.exe" >> $GITHUB_ENV
+            echo "asset_name=nvm-windows.exe" >> $GITHUB_ENV
+          elif [ "${{ matrix.os }}" == "macos-latest" ]; then
+            echo "asset_path=target/release/nvm" >> $GITHUB_ENV
+            echo "asset_name=nvm-macos" >> $GITHUB_ENV
+          else
+            echo "asset_path=target/release/nvm" >> $GITHUB_ENV
+            echo "asset_name=nvm-linux" >> $GITHUB_ENV
+          fi
 
       - name: Upload Release Asset
         uses: actions/upload-release-asset@latest
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: target/release/nvm  # 替换为您的构建产物路径
-          asset_name: nvm-linux  # 替换为您的构建产物名称
+          upload_url: ${{ needs.create_release.outputs.upload_url }}
+          asset_path: ${{ env.asset_path }}
+          asset_name: ${{ env.asset_name }}
           asset_content_type: application/octet-stream
