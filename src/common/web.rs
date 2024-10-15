@@ -1,5 +1,4 @@
 use crate::common::{arch, file};
-use crate::Environment;
 use reqwest::{Client, ClientBuilder, Proxy, StatusCode};
 use std::error::Error;
 use std::fs;
@@ -420,35 +419,4 @@ impl Default for WebContext {
     fn default() -> Self {
         Self::new()
     }
-}
-
-#[cfg(test)]
-#[test]
-fn test_set_mirrors() {
-    let mut address = WebContext::new();
-    address.set_mirrors(&"a.com".to_string(), &"b.com".to_string());
-    println!("{:?}", address)
-}
-
-#[cfg(test)]
-#[test]
-fn test_ping() {
-    let http_context = WebContext::new();
-    let url = "https://github.com/npm/cli/archive/refs/tags/v6.14.17.zip".to_string();
-    let x = http_context.ping(&url);
-    assert_eq!(x, true);
-}
-
-#[cfg(test)]
-#[test]
-fn test_download_url() {
-    let url = "https://github.com/npm/cli/archive/refs/tags/v6.14.17.zip".to_string();
-    let http_context = WebContext::new();
-    let (target, version) = (
-        r"D:\workspace\Rust\nvm-win-rust\res.zip".to_string(),
-        "16.14.0".to_string(),
-    );
-
-    let x = http_context.download(&url, &target, &version);
-    println!("{}", x)
 }

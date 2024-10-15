@@ -42,7 +42,6 @@ use crate::common::node;
 use crate::common::web::WebContext;
 
 mod common;
-pub mod test;
 
 #[derive(Debug)]
 struct Context {
