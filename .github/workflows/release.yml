@@ -1,0 +1,46 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'  # 只在以 v 开头的标签时触发
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]  # 指定操作系统
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable  # 或者你想使用的特定版本
+
+      - name: Build
+        run: cargo build --release
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}  # 使用当前标签作为版本
+          release_name: "Release ${{ github.ref }}"
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: |
+            ${{ matrix.os == 'windows-latest' && 'target/release/your_binary_name.exe' || 'target/release/your_binary_name' }}
+          asset_name: |
+            ${{ matrix.os == 'windows-latest' && 'your_binary_name-windows.exe' || (matrix.os == 'macos-latest' && 'your_binary_name-macos' || 'your_binary_name-linux') }}
+          asset_content_type: application/octet-stream

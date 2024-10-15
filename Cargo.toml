@@ -3,6 +3,10 @@ name = "nvm-rs"
 version = "0.1.0"
 edition = "2021"
 
+[[bin]]
+name = "nvm"  # 构建产物名称
+path = "src/main.rs"          # 指定入口文件的路径
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]

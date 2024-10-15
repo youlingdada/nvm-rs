@@ -2,7 +2,7 @@
 
 echo "Installing NVM (Node Version Manager)..."
 
-$APP_NAME="nvm-win-rust"
+$APP_NAME="nvm"
 
 # 设置NVM_HOME的默认值
 NVM_HOME="$HOME/.nvm"
@@ -38,7 +38,7 @@ if [ -f "./$APP_NAME" ]; then
 elif [ -f "../../target/release/$APP_NAME" ]; then
     sudo cp ../../target/release/$APP_NAME "$NVM_HOME"
 else
-    curl -L https://github.com/youlingdada/nvm-win-rust/releases/download/test-0.1/nvm-win-rust -O nvm-win-rust
+    curl -L https://github.com/youlingdada/nvm-win-rust/releases/download/test-0.1/nvm -O nvm
     sudo mv ./$APP_NAME "$NVM_HOME"
 fi
 sudo chmod +x "$NVM_HOME/$APP_NAME"
@@ -56,16 +56,6 @@ echo "export PATH=\"$NVM_SYMLINK/bin:\$PATH\"" | sudo tee "$NVM_PROFILE"
 
 # 写入到.zprofile中
 echo "source $NVM_PROFILE" | sudo tee -a "$HOME/.zprofile"
-
-# 配置命令脚本
-NVM="$NVM_HOME/nvm"
-if [ -f "$NVM" ]; then
-    sudo rm -f "$NVM"
-fi
-
-echo "#!/bin/zsh" | sudo tee "$NVM"
-echo "$NVM_HOME/nvm-win-rust \"\$@\"" | sudo tee -a "$NVM"
-sudo chmod +x "$NVM"
 
 # 判断/usr/local/bin/nvm 是否存在，存在则删除
 if [ -L "/usr/local/bin/nvm" ]; then

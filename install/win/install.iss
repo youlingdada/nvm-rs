@@ -13,7 +13,7 @@ UsePreviousAppDir=no
 
 [Files]
 ; 包含可执行文件
-Source: "..\..\target\release\nvm-rs.exe"; DestDir: "{app}"; DestName: "nvm.exe"; Flags: ignoreversion
+Source: "..\..\target\release\nvm.exe"; DestDir: "{app}"; DestName: "nvm.exe"; Flags: ignoreversion
 
 ; 包含 bin 目录下的所有文件
 Source: "..\..\bin\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
