@@ -33,7 +33,7 @@ jobs:
 
     # 运行测试
     - name: Run tests
-      run: cargo test
+      run: cargo test --verbose --nocapture
 
     # 可选：上传构建产物
     - name: Upload build artifacts
