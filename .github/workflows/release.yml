@@ -48,19 +48,30 @@ jobs:
       - name: Build
         run: cargo build --release
 
-      - name: Set asset path and name
-        id: set_asset
+      - name: Set asset path and name (Bash)
+        if: matrix.os != 'windows-latest'
         run: |
-          if [ "${{ matrix.os }}" == "windows-latest" ]; then
-            echo "asset_path=target/release/nvm.exe" >> $GITHUB_ENV
-            echo "asset_name=nvm-windows.exe" >> $GITHUB_ENV
-          elif [ "${{ matrix.os }}" == "macos-latest" ]; then
+          if [ "${{ matrix.os }}" == "macos-latest" ]; then
             echo "asset_path=target/release/nvm" >> $GITHUB_ENV
             echo "asset_name=nvm-macos" >> $GITHUB_ENV
           else
             echo "asset_path=target/release/nvm" >> $GITHUB_ENV
             echo "asset_name=nvm-linux" >> $GITHUB_ENV
           fi
+
+      - name: Set asset path and name (PowerShell)
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: |
+          if ("${{ matrix.os }}" -eq "windows-latest") {
+            $env:asset_path = "target/release/nvm.exe"
+            $env:asset_name = "nvm-windows.exe"
+          } else {
+            $env:asset_path = "target/release/nvm"
+            $env:asset_name = "nvm-linux"
+          }
+          echo "asset_path=$env:asset_path" >> $GITHUB_ENV
+          echo "asset_name=$env:asset_name" >> $GITHUB_ENV
 
       - name: Upload Release Asset
         uses: actions/upload-release-asset@latest
