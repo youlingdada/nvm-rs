@@ -16,8 +16,8 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Create Release
-        id: create_release  # 设置 id 以便在后续步骤中引用
-        uses: actions/create-release@latest  # 或者最新的版本
+        id: create_release
+        uses: actions/create-release@latest
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -25,6 +25,9 @@ jobs:
           release_name: "Release ${{ github.ref }}"
           draft: false
           prerelease: false
+
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
 
   build_and_upload:
     runs-on: ${{ matrix.os }}
@@ -60,11 +63,11 @@ jobs:
           fi
 
       - name: Upload Release Asset
-        uses: actions/upload-release-asset@latest  # 使用上传步骤
+        uses: actions/upload-release-asset@latest
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ needs.create_release.outputs.upload_url }}  # 引用 create_release 作业的输出
+          upload_url: ${{ needs.create_release.outputs.upload_url }}
           asset_path: ${{ env.asset_path }}
           asset_name: ${{ env.asset_name }}
           asset_content_type: application/octet-stream
