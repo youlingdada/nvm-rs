@@ -40,7 +40,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: |
-            ${{ matrix.os == 'windows-latest' && 'target/release/your_binary_name.exe' || 'target/release/your_binary_name' }}
+            ${{ matrix.os == 'windows-latest' && 'target/release/nvm.exe' || 'target/release/nvm' }}
           asset_name: |
-            ${{ matrix.os == 'windows-latest' && 'your_binary_name-windows.exe' || (matrix.os == 'macos-latest' && 'your_binary_name-macos' || 'your_binary_name-linux') }}
+            ${{ matrix.os == 'windows-latest' && 'nvm-windows.exe' || (matrix.os == 'macos-latest' && 'nvm-macos' || 'nvm-linux') }}
           asset_content_type: application/octet-stream
