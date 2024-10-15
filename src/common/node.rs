@@ -20,7 +20,7 @@ struct NodeInfo {
     open_ssl: String,
     modules: u32,
     lts: bool,
-    security: bool
+    security: bool,
 }
 
 impl NodeInfo {
@@ -373,31 +373,19 @@ pub fn get_lts(web_context: &WebContext) -> Option<String> {
 #[cfg(test)]
 #[test]
 fn test_get_current_version() {
-    let (v, bit) = get_current_version();
-    println!("v:{},bit:{}", v, bit);
-}
-#[cfg(test)]
-#[test]
-fn test_get_installed() {
-    let list = get_installed(r"F:\application\Code\nvm");
-    for v in list {
-        println!("{}", v);
-    }
+    let _  = get_current_version();
 }
 
 #[cfg(test)]
 #[test]
 fn test_get_available() {
     let web_ctx = WebContext::new();
-    let (_, _, _, _, _, _) = get_available(&web_ctx);
-    println!("{}", 10);
+    let _ = get_available(&web_ctx);
 }
 
 #[cfg(test)]
 #[test]
 fn test_is_version_available() {
     let web_ctx: WebContext = WebContext::new();
-    println!("{}", is_version_available("14.16.0", &web_ctx));
-    println!("{}", is_version_available("20.11.1", &web_ctx));
-    println!("{}", is_version_available("0.111.1", &web_ctx));
+    assert_eq!(is_version_available("14.16.0", &web_ctx), true);
 }

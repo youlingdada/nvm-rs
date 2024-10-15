@@ -5,6 +5,7 @@ use std::env;
 use std::fs::File;
 use std::io::Read;
 
+// get the bit of the file
 pub fn bit(path: &str) -> &str {
     let res = File::open(path);
     if res.is_err() {
@@ -48,6 +49,7 @@ pub fn bit(path: &str) -> &str {
     }
 }
 
+// get the current arch
 pub fn arch_map() -> String {
     let a = env::consts::ARCH;
 
@@ -65,6 +67,7 @@ pub fn arch_map() -> String {
     return node_arch.to_string();
 }
 
+// validate the input arch, if it is empty, return the current arch
 pub fn validate(str: &str) -> String {
     let mut tmp = str.to_string();
     if str.is_empty() {
@@ -89,7 +92,7 @@ fn test_validate() {
 #[test]
 #[cfg(target_os = "windows")]
 fn test_bit() {
-    let path = "C:\\Code\\env\\Node\\node.exe";
+    let path = "assets/64bit.exe";
     let res = bit(path);
     assert_eq!(res, "64");
 }
