@@ -3,10 +3,10 @@ name: Release
 on:
   push:
     tags:
-      - 'v*'  # 只在以 v 开头的标签时触发
+      - "v*" # 只在以 v 开头的标签时触发
 
 permissions:
-  contents: write  # 确保有权限创建发布
+  contents: write # 确保有权限创建发布
 
 jobs:
   create_release:
@@ -21,7 +21,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}  # 使用当前标签作为版本
+          tag_name: ${{ github.ref }} # 使用当前标签作为版本
           release_name: "Release ${{ github.ref }}"
           draft: false
           prerelease: false
@@ -31,7 +31,7 @@ jobs:
 
   build_and_upload:
     runs-on: ${{ matrix.os }}
-    needs: create_release  # 确保在创建发布之后再运行
+    needs: create_release # 确保在创建发布之后再运行
     strategy:
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
@@ -43,7 +43,7 @@ jobs:
       - name: Set up Rust
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: stable  # 或者您想使用的特定版本
+          toolchain: stable # 或者您想使用的特定版本
 
       - name: Build
         run: cargo build --release
@@ -79,6 +79,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.create_release.outputs.upload_url }}
-          asset_path: ${{ env.asset_path }}  # 确保这里引用了正确的环境变量
-          asset_name: ${{ env.asset_name }}  # 确保这里引用了正确的环境变量
+          asset_path: ${{ env.asset_path }} # 确保这里引用了正确的环境变量
+          asset_name: ${{ env.asset_name }} # 确保这里引用了正确的环境变量
           asset_content_type: application/octet-stream
