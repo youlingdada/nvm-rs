@@ -30,8 +30,9 @@ jobs:
       - name: Create Release
         id: create_release
         uses: actions/create-release@latest
-        with:
+        env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        with:
           tag_name: ${{ github.ref }}
           release_name: "Release ${{ github.ref }}"
           draft: false
@@ -53,8 +54,9 @@ jobs:
 
       - name: Upload Release Asset
         uses: actions/upload-release-asset@latest
-        with:
+        env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ${{ steps.set_asset.outputs.asset_path }}
           asset_name: ${{ steps.set_asset.outputs.asset_name }}
