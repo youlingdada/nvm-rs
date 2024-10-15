@@ -6,48 +6,34 @@ on:
       - 'v*'
 
 jobs:
-  build:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
+  release:
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Rust
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-
-      - name: Build
-        run: cargo build --release
+      - name: Check existing release
+        id: check_release
+        run: |
+          release=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          "https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ github.ref }}")
+          echo "::set-output name=release_exists::$(echo $release | jq '. | length')"
 
       - name: Create Release
         id: create_release
+        if: steps.check_release.outputs.release_exists == '0'  # 只有在不存在时创建
         uses: actions/create-release@latest
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}  # 只创建一个发布
+          tag_name: ${{ github.ref }}
           release_name: "Release ${{ github.ref }}"
           draft: false
           prerelease: false
 
-      - name: Set asset path and name
-        id: set_asset
-        run: |
-          if [ "${{ matrix.os }}" == "windows-latest" ]; then
-            echo "::set-output name=asset_path::target/release/nvm.exe"
-            echo "::set-output name=asset_name::nvm-windows.exe"
-          elif [ "${{ matrix.os }}" == "macos-latest" ]; then
-            echo "::set-output name=asset_path::target/release/nvm"
-            echo "::set-output name=asset_name::nvm-macos"
-          else
-            echo "::set-output name=asset_path::target/release/nvm"
-            echo "::set-output name=asset_name::nvm-linux"
-          fi
+      - name: Build
+        run: cargo build --release
 
       - name: Upload Release Asset
         uses: actions/upload-release-asset@latest
@@ -55,6 +41,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ steps.set_asset.outputs.asset_path }}
-          asset_name: ${{ steps.set_asset.outputs.asset_name }}
+          asset_path: target/release/nvm  # 替换为您的构建产物路径
+          asset_name: nvm-linux  # 替换为您的构建产物名称
           asset_content_type: application/octet-stream
