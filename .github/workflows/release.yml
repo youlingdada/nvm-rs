@@ -41,15 +41,15 @@ jobs:
       - name: Set asset path and name
         id: set_asset
         run: |
-          if [ "${{ matrix.os }}" == "windows-latest" ]; then
-            echo "::set-output name=asset_path::target/release/nvm.exe"
-            echo "::set-output name=asset_name::nvm-windows.exe"
-          elif [ "${{ matrix.os }}" == "macos-latest" ]; then
-            echo "::set-output name=asset_path::target/release/nvm"
-            echo "::set-output name=asset_name::nvm-macos"
+          if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
+            echo "asset_path=target/release/nvm.exe" >> $GITHUB_ENV
+            echo "asset_name=nvm-windows.exe" >> $GITHUB_ENV
+          elif [[ "${{ matrix.os }}" == "macos-latest" ]]; then
+            echo "asset_path=target/release/nvm" >> $GITHUB_ENV
+            echo "asset_name=nvm-macos" >> $GITHUB_ENV
           else
-            echo "::set-output name=asset_path::target/release/nvm"
-            echo "::set-output name=asset_name::nvm-linux"
+            echo "asset_path=target/release/nvm" >> $GITHUB_ENV
+            echo "asset_name=nvm-linux" >> $GITHUB_ENV
           fi
 
       - name: Upload Release Asset
@@ -58,6 +58,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ steps.set_asset.outputs.asset_path }}
-          asset_name: ${{ steps.set_asset.outputs.asset_name }}
+          asset_path: ${{ env.asset_path }}
+          asset_name: ${{ env.asset_name }}
           asset_content_type: application/octet-stream
