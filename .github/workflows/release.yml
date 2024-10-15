@@ -5,6 +5,9 @@ on:
     tags:
       - 'v*'  # 只在以 v 开头的标签时触发
 
+permissions:
+  contents: write  # 允许写入仓库内容
+
 jobs:
   build:
     runs-on: ${{ matrix.os }}
