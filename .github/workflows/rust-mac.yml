@@ -1,4 +1,4 @@
-name: Rust
+name: Rust CI
 
 on:
   push:
@@ -11,12 +11,33 @@ env:
 
 jobs:
   build:
-
     runs-on: macos-latest
 
     steps:
     - uses: actions/checkout@v4
+
+    # 使用缓存，避免每次都重新构建依赖
+    - name: Cache Cargo
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.cargo/registry
+          ~/.cargo/git
+        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-cargo-
+
+    # 安装依赖并构建项目
     - name: Build
       run: cargo build --verbose --release
+
+    # 运行测试
     - name: Run tests
-      run: cargo test --verbose
+      run: cargo test --verbose -- --nocapture
+
+    # 可选：上传构建产物
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: build
+        path: target/release/  # 上传 release 构建文件
