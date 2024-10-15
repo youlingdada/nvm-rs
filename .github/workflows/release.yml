@@ -3,17 +3,17 @@ name: Release
 on:
   push:
     tags:
-      - 'v*'  # 只在以 v 开头的标签时触发
+      - 'v*'
 
 permissions:
-  contents: write  # 允许写入仓库内容
+  contents: write
 
 jobs:
   build:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]  # 指定操作系统
+        os: [macos-latest, ubuntu-latest, windows-latest]
 
     steps:
       - name: Checkout code
@@ -22,26 +22,40 @@ jobs:
       - name: Set up Rust
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: stable  # 或者你想使用的特定版本
+          toolchain: stable
 
       - name: Build
         run: cargo build --release
 
       - name: Create Release
         id: create_release
-        uses: actions/create-release@v1
+        uses: actions/create-release@latest
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}  # 使用当前标签作为版本
+          tag_name: ${{ github.ref }}
           release_name: "Release ${{ github.ref }}"
           draft: false
           prerelease: false
 
+      - name: Set asset path and name
+        id: set_asset
+        run: |
+          if [ "${{ matrix.os }}" == "windows-latest" ]; then
+            echo "::set-output name=asset_path::target/release/nvm.exe"
+            echo "::set-output name=asset_name::nvm-windows.exe"
+          elif [ "${{ matrix.os }}" == "macos-latest" ]; then
+            echo "::set-output name=asset_path::target/release/nvm"
+            echo "::set-output name=asset_name::nvm-macos"
+          else
+            echo "::set-output name=asset_path::target/release/nvm"
+            echo "::set-output name=asset_name::nvm-linux"
+          fi
+
       - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
+        uses: actions/upload-release-asset@latest
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ matrix.os == 'windows-latest' && 'target/release/nvm.exe' || (matrix.os == 'macos-latest' && 'target/release/nvm' || 'target/release/nvm') }}
-          asset_name: ${{ matrix.os == 'windows-latest' && 'nvm-windows.exe' || (matrix.os == 'macos-latest' && 'nvm-macos' || 'nvm-linux') }}
+          asset_path: ${{ steps.set_asset.outputs.asset_path }}
+          asset_name: ${{ steps.set_asset.outputs.asset_name }}
           asset_content_type: application/octet-stream
