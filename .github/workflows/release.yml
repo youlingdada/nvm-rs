@@ -73,11 +73,14 @@ jobs:
         with:
           toolchain: stable # 或者您想使用的特定版本
 
+      - name: Install musl target
+        run: rustup target add x86_64-unknown-linux-musl
+
       - name: Build
-        run: cargo build --release
+        run: cargo build --release --target x86_64-unknown-linux-musl # 使用 musl 目标构建
 
       - name: Package
-        run: tar -czf nvm-linux.tar.gz target/release/nvm install/linux/
+        run: tar -czf nvm-linux.tar.gz -C target/x86_64-unknown-linux-musl/release nvm -C ../../.. install/linux/ # 修改路径，确保正确打包
 
       - name: Upload Release Asset
         uses: actions/upload-release-asset@latest

@@ -31,7 +31,7 @@ sudo mkdir -p "$NVM_HOME"
 
 # 安装NVM
 # 1、移动nvm-linux到NVM_HOME目录
-sudo cp ./nvm-linux "$NVM_HOME"/nvm
+sudo cp ./nvm "$NVM_HOME"/nvm
 
 # 创建settings文件,写入NVM_HOME(root)和NVM_SYMLINK(path)
 echo "root: $NVM_HOME" | sudo tee "$NVM_HOME/settings.txt"
