@@ -79,6 +79,11 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends musl-tools
+      - name: Install OpenSSL
+        run: sudo apt-get install -y libssl-dev
+      - name: Set OpenSSL environment variable
+        run: echo "OPENSSL_DIR=/usr" >> $GITHUB_ENV
+        
       - uses: actions/checkout@v4
       - name: Build release binary
         run: cargo build --release --target x86_64-unknown-linux-musl
