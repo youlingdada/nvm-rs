@@ -81,6 +81,11 @@ jobs:
           sudo apt-get install -y --no-install-recommends musl-tools
       - name: Install openssl
         run: sudo apt-get install pkg-config libssl-dev
+
+      - name: set env
+        run: |
+          echo "OPENSSL_INCLUDE_DIR=/usr/include/openssl" >> $GITHUB_ENV
+          echo "OPENSSL_LIB_DIR=/usr/lib/x86_64-linux-gnu" >> $GITHUB_ENV
         
       - uses: actions/checkout@v4
       - name: Build release binary
