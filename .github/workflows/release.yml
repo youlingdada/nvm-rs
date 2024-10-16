@@ -48,7 +48,7 @@ jobs:
 
         # 打包，把target/release/nvm,bin/install/mac/ 目录下的文件打包
       - name: Package
-        run: tar -czf nvm-macos.tar.gz target/release/nvm bin/install/mac/
+        run: tar -czf nvm-macos.tar.gz target/release/nvm install/mac/
 
       - name: Upload Release Asset
         uses: actions/upload-release-asset@latest
@@ -77,7 +77,7 @@ jobs:
         run: cargo build --release
 
       - name: Package
-        run: tar -czf nvm-linux.tar.gz target/release/nvm bin/install/linux/
+        run: tar -czf nvm-linux.tar.gz target/release/nvm install/linux/
 
       - name: Upload Release Asset
         uses: actions/upload-release-asset@latest
