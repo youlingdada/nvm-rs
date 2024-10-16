@@ -30,16 +30,27 @@ fi
 sudo mkdir -p "$NVM_HOME"
 
 # 安装NVM
-# 1、移动target/release/nvm-win-rust到NVM_HOME目录
-sudo cp ../../target/release/nvm-win-rust "$NVM_HOME"
+# 1、移动nvm-linux到NVM_HOME目录
+sudo cp ./nvm-linux "$NVM_HOME"/nvm
 
 # 创建settings文件,写入NVM_HOME(root)和NVM_SYMLINK(path)
 echo "root: $NVM_HOME" | sudo tee "$NVM_HOME/settings.txt"
 echo "symlink: $NVM_SYMLINK" | sudo tee -a "$NVM_HOME/settings.txt"
 
-# 确保 nvm-win-rust 可以以管理员身份运行
-# 判断/usr/local/bin/nvm-win-rust 是否存在，存在则删除
-if [ ! -L "/usr/local/bin/nvm-win-rust" ]; then
-    sudo ln -s "$NVM_HOME/nvm-win-rust" /usr/local/bin/nvm-win-rust
+# 确保 nvm 可以以管理员身份运行
+# 判断/usr/local/bin/nvm 是否存在，存在则删除
+if [ ! -L "/usr/local/bin/nvm" ]; then
+    sudo ln -s "$NVM_HOME/nvm" /usr/local/bin/nvm
 fi
+
+# 给予卸载脚本可执行权限，并移动到NVM_HOME目录
+sudo cp ./uninstall.sh "$NVM_HOME"/nvm-uninstall.sh
+sudo chmod +x "$NVM_HOME"/nvm-uninstall.sh
+
+# 导出环境变量到用户目录
+echo "export NVM_HOME=$NVM_HOME" >> "$HOME/.bashrc"
+echo "export NVM_SYMLINK=$NVM_SYMLINK" >> "$HOME/.bashrc"
+echo "export PATH=\$PATH:\$NVM_HOME" >> "$HOME/.bashrc"
+source "$HOME/.bashrc"
+
 echo "NVM has been installed successfully."

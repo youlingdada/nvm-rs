@@ -46,14 +46,18 @@ jobs:
       - name: Build
         run: cargo build --release
 
+        # 打包，把target/release/nvm,bin/install/mac/ 目录下的文件打包
+      - name: Package
+        run: tar -czf nvm-macos.tar.gz target/release/nvm bin/install/mac/
+
       - name: Upload Release Asset
         uses: actions/upload-release-asset@latest
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.create_release.outputs.upload_url }}
-          asset_path: target/release/nvm 
-          asset_name: nvm-macos
+          asset_path: nvm-macos.tar.gz 
+          asset_name: nvm-macos.tar.gz
           asset_content_type: application/octet-stream
 
   build_and_upload_linux:
@@ -72,14 +76,17 @@ jobs:
       - name: Build
         run: cargo build --release
 
+      - name: Package
+        run: tar -czf nvm-linux.tar.gz target/release/nvm bin/install/linux/
+
       - name: Upload Release Asset
         uses: actions/upload-release-asset@latest
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.create_release.outputs.upload_url }}
-          asset_path: target/release/nvm
-          asset_name: nvm-linux
+          asset_path: nvm-linux.tar.gz
+          asset_name: nvm-linux.tar.gz
           asset_content_type: application/octet-stream
 
 
