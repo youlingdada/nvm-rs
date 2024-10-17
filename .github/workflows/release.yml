@@ -107,16 +107,23 @@ jobs:
     needs: create_release # 确保在创建发布之后再运行
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Rust
-        uses: actions-rs/toolchain@v1
+      - uses: hecrj/setup-rust-action@v1
         with:
-          toolchain: stable # 或者您想使用的特定版本
+          rust-version: ${{env.RUST_VERSION}}
+          targets: x86_64-unknown-linux-musl
 
+      - uses: actions/checkout@v4
       - name: Build
         run: cargo build --release
+
+      - name: Install Inno Setup
+        run: |
+          curl -L -o innosetup.exe https://jrsoftware.org/download.php/is.exe
+          Start-Process -Wait -FilePath innosetup.exe /VERYSILENT /SUPPRESSMSGBOXES /NORESTART
+
+      - name: Build Installer with Inno Setup
+        run: |
+          "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" install/win/install.iss
 
       - name: Upload Release Asset
         uses: actions/upload-release-asset@latest
@@ -124,6 +131,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.create_release.outputs.upload_url }}
-          asset_path: target/release/nvm.exe 
-          asset_name: nvm-windows.exe 
+          asset_path: setup/nvm-rs-setup.exe
+          asset_name: nvm-rs-setup-windows.exe 
           asset_content_type: application/octet-stream
