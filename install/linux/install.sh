@@ -50,7 +50,7 @@ sudo chmod +x "$NVM_HOME"/nvm-uninstall.sh
 # 导出环境变量到用户目录
 echo "export NVM_HOME=$NVM_HOME" >> "$HOME/.bashrc"
 echo "export NVM_SYMLINK=$NVM_SYMLINK" >> "$HOME/.bashrc"
-echo "export PATH=\$PATH:\$NVM_HOME" >> "$HOME/.bashrc"
+echo "export PATH=$PATH:$NVM_HOME:$NVM_SYMLINK/bin" >> "$HOME/.bashrc"
 source "$HOME/.bashrc"
 
 echo "NVM has been installed successfully."
