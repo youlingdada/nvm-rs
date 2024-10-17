@@ -112,18 +112,17 @@ jobs:
           rust-version: ${{env.RUST_VERSION}}
           targets: x86_64-unknown-linux-musl
 
-      - name: Install Inno Setup
+      - name: Set up Inno Setup
         run: |
-          curl -L -o innosetup.exe https://jrsoftware.org/download.php/is.exe
-          Start-Process -FilePath "innosetup.exe" -ArgumentList "/VERYSILENT", "/SUPPRESSMSGBOXES", "/NORESTART" -Wait
+          choco install innosetup
   
       - uses: actions/checkout@v4
       - name: Build
         run: cargo build --release
 
-      - name: Build Installer with Inno Setup
+      - name: Compile the installer
         run: |
-          "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" install/win/install.iss
+          iscc /Qp "install/win/install.iss" # 替换为你的 .iss 文件路径
 
       - name: Upload Release Asset
         uses: actions/upload-release-asset@latest
