@@ -86,7 +86,11 @@ jobs:
       - name: Strip binary from debug symbols
         run: strip target/x86_64-unknown-linux-musl/release/nvm
       - name: Package
-        run: tar -czf nvm-linux.tar.gz -C target/x86_64-unknown-linux-musl/release nvm -C ../../.. install/linux/ # 修改路径，确保正确打包
+        run: |
+          mkdir -p install-linux
+          cp target/x86_64-unknown-linux-musl/release/nvm install-linux/
+          cp -r install/linux/* install-linux/
+          tar -czf nvm-linux.tar.gz -C install-linux nvm
 
       - name: Upload Release Asset
         uses: actions/upload-release-asset@latest
