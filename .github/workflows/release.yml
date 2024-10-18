@@ -38,20 +38,20 @@ jobs:
     needs: create_release # 确保在创建发布之后再运行
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Rust
-        uses: actions-rs/toolchain@v1
+      - uses: hecrj/setup-rust-action@v1
         with:
-          toolchain: stable # 或者您想使用的特定版本
+          rust-version: ${{env.RUST_VERSION}}
 
       - name: Build
         run: cargo build --release
 
         # 打包，把target/release/nvm,bin/install/mac/ 目录下的文件打包
       - name: Package
-        run: tar -czf nvm-macos.tar.gz target/release/nvm install/mac/
+        run: |
+          mkdir -p install-mac
+          cp target/release/nvm install-mac/
+          cp -r install/mac/* install-mac/
+          tar -czf nvm-macos.tar.gz -C install-mac .
 
       - name: Upload Release Asset
         uses: actions/upload-release-asset@latest
