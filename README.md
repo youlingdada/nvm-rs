@@ -18,7 +18,7 @@ cargo build --release
 * 对于linux 和 mac 系统,如安装到/usr/local/nvm文件下
     * 移动可执行文件到对应的目录
         ```shell
-        sudo mv target/release/nvm-rs /usr/local/nvm/nvm
+        sudo mv target/release/nvm /usr/local/nvm/
         ```
     * 写入setting.txt配置
         ```shell
@@ -36,6 +36,11 @@ cargo build --release
         echo "export NVM_HOME=/usr/local/nvm" >> ~/.bash_profile
         echo "export NVM_SYMLINK=/usr/local/nvm/node" >> ~/.bash_profile
         source ~/.bash_profile
+
+        # fish
+        echo "set -x NVM_HOME /usr/local/nvm" >> ~/.config/fish/config.fish
+        echo "set -x NVM_SYMLINK /usr/local/nvm/node" >> ~/.config/fish/config.fish
+        source ~/.config/fish/config.fish
         ```
 * windows
 
