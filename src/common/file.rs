@@ -5,32 +5,32 @@ use std::{fs, io};
 
 use anyhow::Result;
 
-#[cfg(target_os="linux")]
-use std::os::unix::fs::PermissionsExt;
-#[cfg(target_os="linux")]
-use tar::{EntryType,Archive};
-#[cfg(target_os="linux")]
+#[cfg(target_os = "linux")]
 use flate2::read::GzDecoder;
-#[cfg(target_os="linux")]
-use std::path::PathBuf;
-#[cfg(target_os="linux")]
+#[cfg(target_os = "linux")]
 use std::env;
-
-#[cfg(target_os="macos")]
+#[cfg(target_os = "linux")]
 use std::os::unix::fs::PermissionsExt;
-#[cfg(target_os="macos")]
-use tar::{EntryType,Archive};
-#[cfg(target_os="macos")]
-use flate2::read::GzDecoder;
-#[cfg(target_os="macos")]
+#[cfg(target_os = "linux")]
 use std::path::PathBuf;
-#[cfg(target_os="macos")]
-use std::env;
+#[cfg(target_os = "linux")]
+use tar::{Archive, EntryType};
 
-#[cfg(target_os="windows")]
-use zip::ZipArchive;
-#[cfg(target_os="windows")]
+#[cfg(target_os = "macos")]
+use flate2::read::GzDecoder;
+#[cfg(target_os = "macos")]
+use std::env;
+#[cfg(target_os = "macos")]
+use std::os::unix::fs::PermissionsExt;
+#[cfg(target_os = "macos")]
+use std::path::PathBuf;
+#[cfg(target_os = "macos")]
+use tar::{Archive, EntryType};
+
+#[cfg(target_os = "windows")]
 use zip;
+#[cfg(target_os = "windows")]
+use zip::ZipArchive;
 
 /// tag 是否解压到当前目录，
 /// 需要解压的文件位置test.zip
@@ -209,11 +209,11 @@ pub fn exists(path: &str) -> bool {
     }
 }
 
-#[cfg(target_os="linux")]
+#[cfg(target_os = "linux")]
 pub fn get_executable_path() -> Result<PathBuf, Box<dyn std::error::Error>> {
     // 获取当前可执行文件的路径
     let exe_path: PathBuf = env::current_exe()?;
-    
+
     // 检查是否是软链接
     match fs::read_link(&exe_path) {
         Ok(link_path) => {
@@ -227,11 +227,11 @@ pub fn get_executable_path() -> Result<PathBuf, Box<dyn std::error::Error>> {
     }
 }
 
-#[cfg(target_os="macos")]
+#[cfg(target_os = "macos")]
 pub fn get_executable_path() -> Result<PathBuf, Box<dyn std::error::Error>> {
     // 获取当前可执行文件的路径
     let exe_path: PathBuf = env::current_exe()?;
-    
+
     // 检查是否是软链接
     match fs::read_link(&exe_path) {
         Ok(link_path) => {
@@ -247,7 +247,7 @@ pub fn get_executable_path() -> Result<PathBuf, Box<dyn std::error::Error>> {
 
 #[cfg(test)]
 #[test]
-#[cfg(target_os="windows")]
+#[cfg(target_os = "windows")]
 fn test_un_zip() {
     let src = r"E:\Code\tools\nvm\temp\npm-v9.8.1.zip".to_string();
     let dest = r"E:\Code\tools\nvm\temp\nvm-npm".to_string();
@@ -259,7 +259,7 @@ fn test_un_zip() {
 
 #[cfg(test)]
 #[test]
-#[cfg(target_os="windows")]
+#[cfg(target_os = "windows")]
 fn test_file_exists() {
     let path = r"D:\workspace\rust\nvm-win-rust";
     assert_eq!(exists(path), true);
@@ -267,15 +267,15 @@ fn test_file_exists() {
 
 #[cfg(test)]
 #[test]
-#[cfg(target_os="linux")]
-fn test_get_executable_path(){
+#[cfg(target_os = "linux")]
+fn test_get_executable_path() {
     let path = get_executable_path();
-    if path.is_err(){
-        println!("{:?}",path.err());
-    }else{
+    if path.is_err() {
+        println!("{:?}", path.err());
+    } else {
         let mut path = path.unwrap();
-        println!("exe path: {}",path.to_str().unwrap());
+        println!("exe path: {}", path.to_str().unwrap());
         path.pop();
-        println!("exe dir: {}",path.to_str().unwrap());
+        println!("exe dir: {}", path.to_str().unwrap());
     }
 }

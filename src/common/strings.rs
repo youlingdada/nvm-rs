@@ -1,5 +1,5 @@
-use std::env;
 use regex::Regex;
+use std::env;
 
 // s 是否包含chars 中任何一个字符
 pub fn contains_any(s: &str, chars: &str) -> bool {
@@ -22,5 +22,6 @@ pub fn replace_env_vars(input: &str) -> String {
         } else {
             String::new()
         }
-    }).to_string()
+    })
+    .to_string()
 }

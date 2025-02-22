@@ -217,7 +217,7 @@ fn main() {
         "install" => nvm_env.install(&detail, &proc_arch),
         "uninstall" => nvm_env.uninstall(&detail),
         "switch" => nvm_env.switch(&detail),
-        "sw" =>nvm_env.switch(&detail),
+        "sw" => nvm_env.switch(&detail),
         "use" => nvm_env.use_node(&detail, &proc_arch, &reload),
         "list" => nvm_env.list(&detail),
         "ls" => nvm_env.list(&detail),
@@ -293,7 +293,9 @@ fn help() {
     println!("  nvm on                       : Enable node.js version management.");
     println!("  nvm off                      : Disable node.js version management.");
     println!("  nvm proxy [url]              : Set a proxy to use for downloads. Leave [url] blank to see the current proxy.");
-    println!("                                               Set [url] to \"none\" to remove the proxy.");
+    println!(
+        "                                               Set [url] to \"none\" to remove the proxy."
+    );
     println!("  nvm node_mirror [url]        : Set the node mirror. Defaults to https://nodejs.org/dist/. Leave [url] blank to use default url.");
     println!("  nvm npm_mirror [url]         : Set the npm mirror. Defaults to https://github.com/npm/cli/archive/. Leave [url] blank to default url.");
     println!("  nvm uninstall <version>      : The version must be a specific version.");
@@ -1239,8 +1241,11 @@ impl Environment {
             return;
         }
 
-        installed_versions
-            .sort_by(|a, b| Version::parse(&b[1..]).unwrap().cmp(&Version::parse(&a[1..]).unwrap()));
+        installed_versions.sort_by(|a, b| {
+            Version::parse(&b[1..])
+                .unwrap()
+                .cmp(&Version::parse(&a[1..]).unwrap())
+        });
 
         let mut i = 0;
         for version in &installed_versions {
