@@ -373,7 +373,7 @@ pub fn get_lts(web_context: &WebContext) -> Option<String> {
 #[cfg(test)]
 #[test]
 fn test_get_current_version() {
-    let _  = get_current_version();
+    let _ = get_current_version();
 }
 
 #[cfg(test)]

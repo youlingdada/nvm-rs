@@ -1,8 +1,8 @@
 use std::path::{Component, Path, PathBuf};
 
-pub fn join(base : &str, paths : Vec<&str>) -> String{
+pub fn join(base: &str, paths: Vec<&str>) -> String {
     let mut ret = PathBuf::from(base);
-    for v in paths{
+    for v in paths {
         ret.push(v);
     }
     ret.to_str().unwrap().to_string()
